@@ -1,0 +1,49 @@
+# 🌍 PM 2.5 Air Quality Forecasting & Spatial Alert System
+
+**Project Type:** Time-Series Forecasting & Deep Learning  
+**Author:** [Suthin Junphet]  
+**Tech Stack:** Python, TensorFlow (Keras), Statsmodels, Pandas, Matplotlib, Scikit-Learn
+
+---
+
+## 📌 Project Overview (ภาพรวมโครงการ)
+มลพิษทางอากาศ (PM 2.5) เป็นหนึ่งในปัญหาสำคัญที่ส่งผลกระทบต่อสุขภาพของประชาชนและเศรษฐกิจในระดับประเทศ โปรเจกต์นี้มีเป้าหมายเพื่อสร้าง **ระบบพยากรณ์ค่าฝุ่น PM 2.5 ล่วงหน้า** โดยใช้ข้อมูลสภาพอากาศและ **"บริบทเชิงพื้นที่ (Spatial Context)"** จากเขตข้างเคียง เพื่อแจ้งเตือนความเสี่ยงและช่วยให้หน่วยงานหรือประชาชนวางแผนกิจกรรมกลางแจ้งได้อย่างปลอดภัย
+
+## 🎯 Objective (เป้าหมาย)
+1. เปรียบเทียบประสิทธิภาพของโมเดลสายสถิติ (**ARIMA**) และโมเดล Deep Learning (**LSTM, GRU**) ในการจัดการข้อมูล Time-Series ที่มีความผันผวนสูง
+2. พิสูจน์สมมติฐานว่า การรวมฟีเจอร์ "ค่าเฉลี่ยฝุ่นจากเขตพื้นที่ติดกัน" ช่วยเพิ่มความแม่นยำในการทำนายสถานีเป้าหมายได้
+3. แปลงผลลัพธ์จากโมเดล (Prediction) ให้กลายเป็นระบบแจ้งเตือน (Rule-based Alert System) ที่ใช้งานได้จริง
+
+---
+
+## 🛠️ Methodology & Approach (ระเบียบวิธีและขั้นตอน)
+
+* **Data Engineering (Spatial Strategy):** แทนที่จะใช้ข้อมูลทุกเขตใน กทม. ซึ่งจะทำให้เกิดปัญหา Dimensionality โครงการนี้ได้เลือกใช้ **กลยุทธ์ Focus Area** โดยนำค่าพยากรณ์สภาพอากาศ (อุณหภูมิ, ความชื้น, ลม) และค่าเฉลี่ยฝุ่นของเขตรอบข้าง (Neighbors) มาเป็นตัวแปร (Features) 
+* **Data Preprocessing:** ดำเนินการทำ Min-Max Scaling และทำ Time-based splitting (80/20) โดยสร้าง Look-back window ย้อนหลัง 7 วันเพื่อทำนายวันพรุ่งนี้
+* **Modeling (Algorithms used):**
+  * **ARIMA** (Statistical Baseline)
+  * **LSTM** (Long Short-Term Memory - Deep Learning)
+  * **GRU** (Gated Recurrent Unit - Deep Learning)
+
+---
+
+## 📊 Key Findings & Results (ผลลัพธ์ที่สำคัญ)
+
+จากการประเมินผลด้วย Root Mean Squared Error (RMSE) และ Mean Absolute Error (MAE) พบว่า:
+1. **Deep Learning Outperforms Baseline:** โมเดล LSTM และ GRU สามารถจับแนวโน้มความสัมพันธ์แบบ Non-linear และจุด Spikes (วันที่ฝุ่นพุ่งสูงกะทันหัน) ได้ดีกว่า ARIMA อย่างชัดเจน
+2. **Spatial Context Matters:** การรับรู้ค่าฝุ่นจากเขตรอบข้าง ช่วยให้โมเดล Neural Network เรียนรู้ทิศทางการสะสมตัวของฝุ่นข้ามพื้นที่ได้สมจริงยิ่งขึ้น
+
+### 📈 Actual vs Predicted Visualization
+*(นำรูปภาพกราฟเปรียบเทียบ ARIMA, LSTM, GRU ทั้งภาพรวมและ Zoom-in 60 วันที่รันได้จาก Python มาอัปโหลดและใส่ตรงนี้)* `![Forecasting Results](ใส่ลิงก์รูปภาพของคุณ)`
+
+---
+
+## 🚨 Business / Social Action (การนำไปใช้งานจริง)
+เพื่อไม่ให้โมเดลหยุดอยู่แค่ตัวเลข ได้มีการพัฒนาต่อยอดฟังก์ชัน **Automated Alert System**:
+- หากโมเดลพยากรณ์ค่าฝุ่นพรุ่งนี้ `> 50 µg/m³` ระบบจะออก Trigger: **"แจ้งเตือน: ควรงดกิจกรรมกลางแจ้งที่ใช้แรงมาก"**
+- หากค่าสูงวิกฤต ระบบจะแนะนำมาตรการฉุกเฉิน (สวมหน้ากาก N95 / WFH) ซึ่งสามารถนำไปต่อยอดเชื่อมกับระบบ LINE Notify ของเทศบาลหรือโรงเรียนได้ทันที
+
+---
+
+## 🧠 Final Thought (มุมมองจากผู้จัดทำ)
+ด้วยประสบการณ์การทำงานในภาครัฐ 7 ปี ผมเล็งเห็นว่า Public Data หากนำมาประมวลผลด้วยเทคโนโลยีที่ถูกต้อง จะสามารถยกระดับคุณภาพชีวิตและสาธารณสุขได้อย่างมหาศาล โปรเจกต์นี้แสดงให้เห็นถึงศักยภาพของ Data Science ในการเปลี่ยนข้อมูลเชิงรับ (Historical Data) ให้กลายเป็นการป้องกันเชิงรุก (Proactive Alert) ครับ
